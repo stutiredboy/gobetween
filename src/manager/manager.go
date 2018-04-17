@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"../acme"
 	"../config"
 	"../core"
 	"../logging"
@@ -24,6 +25,8 @@ var servers = struct {
 	sync.RWMutex
 	m map[string]core.Server
 }{m: make(map[string]core.Server)}
+
+var acmeService *acme.AcmeService
 
 /* default configuration for server */
 var defaults config.ConnectionOptions
@@ -43,6 +46,13 @@ func Initialize(cfg config.Config) {
 
 	// save defaults for futher reuse
 	defaults = cfg.Defaults
+	initDefaults()
+
+	//Initialize global sections
+	initConfigGlobals(&cfg)
+
+	//create acme services
+	acmeService = acme.NewAcmeService(cfg)
 
 	// Go through config and start servers for each server
 	for name, serverCfg := range cfg.Servers {
@@ -53,6 +63,46 @@ func Initialize(cfg config.Config) {
 	}
 
 	log.Info("Initialized")
+}
+
+func initDefaults() {
+	//defaults
+	if defaults.MaxConnections == nil {
+		defaults.MaxConnections = new(int)
+	}
+
+	if defaults.ClientIdleTimeout == nil {
+		defaults.ClientIdleTimeout = new(string)
+		*defaults.ClientIdleTimeout = "0"
+	}
+
+	if defaults.BackendIdleTimeout == nil {
+		defaults.BackendIdleTimeout = new(string)
+		*defaults.BackendIdleTimeout = "0"
+	}
+
+	if defaults.BackendConnectionTimeout == nil {
+		defaults.BackendConnectionTimeout = new(string)
+		*defaults.BackendConnectionTimeout = "0"
+	}
+}
+
+func initConfigGlobals(cfg *config.Config) {
+
+	//acme
+	if cfg.Acme != nil {
+		if cfg.Acme.Challenge == "" {
+			cfg.Acme.Challenge = "http"
+		}
+
+		if cfg.Acme.Bind == "" {
+			cfg.Acme.Bind = "0.0.0.0:80"
+		}
+
+		if cfg.Acme.CacheDir == "" {
+			cfg.Acme.CacheDir = "/tmp"
+		}
+	}
 }
 
 /**
@@ -125,7 +175,8 @@ func Create(name string, cfg config.Server) error {
 		return err
 	}
 
-	server, err := server.New(name, c)
+	server, err := server.New(name, c, []core.Service{acmeService})
+
 	if err != nil {
 		return err
 	}
@@ -154,6 +205,10 @@ func Delete(name string) error {
 
 	server.Stop()
 	delete(servers.m, name)
+
+	if acmeService != nil {
+		acmeService.Forget(server)
+	}
 
 	return nil
 }
@@ -284,23 +339,12 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 
 	if server.Tls != nil {
 
-		if !server.Tls.AcmeEnabled && ((server.Tls.KeyPath == "") || (server.Tls.CertPath == "")) {
-			return config.Server{}, errors.New("tls requires specify either acme configuration or both key and cert paths")
+		if (len(server.Tls.AcmeHosts) == 0) && ((server.Tls.KeyPath == "") || (server.Tls.CertPath == "")) {
+			return config.Server{}, errors.New("tls requires specify either acme hosts or both key and cert paths")
 		}
 
-		if server.Tls.AcmeEnabled {
-
-			if server.Tls.AcmeCacheDir == "" {
-				server.Tls.AcmeCacheDir = os.TempDir()
-			}
-
-			if len(server.Tls.AcmeHosts) == 0 {
-				return config.Server{}, errors.New("Need to provide at least one host in acme_hosts")
-			}
-
-			if !strings.HasSuffix(server.Bind, ":443") {
-				return config.Server{}, errors.New("Enabled acme support requires to bind on default https port :443")
-			}
+		if (len(server.Tls.AcmeHosts) != 0) && ((server.Tls.KeyPath == "") || (server.Tls.CertPath == "")) && acmeService == nil {
+			return config.Server{}, errors.New("Global Acme section is missing, but server requires it")
 		}
 
 	}
@@ -416,36 +460,21 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 
 	/* TODO: Still need to decide how to get rid of this */
 
-	if defaults.MaxConnections == nil {
-		defaults.MaxConnections = new(int)
-	}
 	if server.MaxConnections == nil {
 		server.MaxConnections = new(int)
 		*server.MaxConnections = *defaults.MaxConnections
 	}
 
-	if defaults.ClientIdleTimeout == nil {
-		defaults.ClientIdleTimeout = new(string)
-		*defaults.ClientIdleTimeout = "0"
-	}
 	if server.ClientIdleTimeout == nil {
 		server.ClientIdleTimeout = new(string)
 		*server.ClientIdleTimeout = *defaults.ClientIdleTimeout
 	}
 
-	if defaults.BackendIdleTimeout == nil {
-		defaults.BackendIdleTimeout = new(string)
-		*defaults.BackendIdleTimeout = "0"
-	}
 	if server.BackendIdleTimeout == nil {
 		server.BackendIdleTimeout = new(string)
 		*server.BackendIdleTimeout = *defaults.BackendIdleTimeout
 	}
 
-	if defaults.BackendConnectionTimeout == nil {
-		defaults.BackendConnectionTimeout = new(string)
-		*defaults.BackendConnectionTimeout = "0"
-	}
 	if server.BackendConnectionTimeout == nil {
 		server.BackendConnectionTimeout = new(string)
 		*server.BackendConnectionTimeout = *defaults.BackendConnectionTimeout
