@@ -43,11 +43,10 @@ client_idle_timeout = "0"        # Client inactivity duration before forced conn
 backend_idle_timeout = "0"       # Backend inactivity duration before forced connection drop
 backend_connection_timeout = "0" # Backend connection timeout (ignored in udp)
 
-[acme]
-challenge = "http"               # (optional) http | sni | dns . Currently only http is supported
-bind = "0.0.0.0:80"              # (optional) It is possible to bind to other port, but letsencrypt will send requests to http(80) anyway
+[acme]                           # (optional)
+challenge = "http"               # (optional) http | sni | dns
+http_bind = "0.0.0.0:80"         # (optional) It is possible to bind to other port, but letsencrypt will send requests to http(80) anyway
 cache_dir = "/tmp"               # (optional) directory to put acme certificates
-
 
 #
 # Servers contains as many [server.<name>] sections as needed.
@@ -132,7 +131,7 @@ protocol = "udp"
 #
 ## ---------------------- tls properties --------------------- #
 #
-#  # Either both cert_path and key_path or acme_hosts should be specified (and configured global [acme] section
+#  # *Either both cert_path and key_path or acme_hosts should be specified (and configured global [acme] section
 #
 #  [servers.default.tls]             # (required) if protocol == "tls"
 #  cert_path = "/path/to/file.crt"   # (*required) path to crt file

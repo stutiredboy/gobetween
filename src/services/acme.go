@@ -1,18 +1,10 @@
-package acme
-
-/*
- * TODO:
- * 1. Listen to bind host/port
- * 2. Aggregate all acme_hosts from all servers
- * 3. Reconfigure if server list or configuration changes
- */
+package services
 
 import (
 	"../config"
 	"../core"
 	"../server/tcp"
 	"context"
-	"crypto/tls"
 	"fmt"
 	"golang.org/x/crypto/acme/autocert"
 	"net/http"
@@ -25,7 +17,7 @@ type AcmeService struct {
 	sync.RWMutex
 }
 
-func NewAcmeService(cfg config.Config) *AcmeService {
+func NewAcmeService(cfg config.Config) core.Service {
 
 	if cfg.Acme == nil {
 		return nil
@@ -52,11 +44,15 @@ func NewAcmeService(cfg config.Config) *AcmeService {
 
 	//accept http challenge
 	if cfg.Acme.Challenge == "http" {
-		go http.ListenAndServe(cfg.Acme.Bind, a.certMan.HTTPHandler(nil))
+		go http.ListenAndServe(cfg.Acme.HttpBind, a.certMan.HTTPHandler(nil))
 	}
 
 	return a
 
+}
+
+func (a *AcmeService) String() string {
+	return ""
 }
 
 func (a *AcmeService) Apply(server core.Server) error {
@@ -77,7 +73,7 @@ func (a *AcmeService) Apply(server core.Server) error {
 		return nil
 	}
 
-	tcpServer.GetCertificate = a.GetCertificate
+	tcpServer.GetCertificate = a.certMan.GetCertificate
 
 	a.Lock()
 	defer a.Unlock()
@@ -110,8 +106,4 @@ func (a *AcmeService) Forget(server core.Server) error {
 	}
 
 	return nil
-}
-
-func (a *AcmeService) GetCertificate(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
-	return a.certMan.GetCertificate(hello)
 }

@@ -67,7 +67,7 @@ type ConnectionOptions struct {
  */
 type AcmeConfig struct {
 	Challenge string `toml:"challenge" json:"challenge"`
-	Bind      string `toml:"bind" json:"bind"`
+	HttpBind  string `toml:"http_bind" json:"http_bind"`
 	CacheDir  string `toml:"cache_dir" json:"cache_dir"`
 }
 

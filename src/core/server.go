@@ -31,11 +31,3 @@ type Server interface {
 	 */
 	Cfg() config.Server
 }
-
-/**
- * Service interface
- */
-type Service interface {
-	Apply(Server) error
-	Forget(Server) error
-}

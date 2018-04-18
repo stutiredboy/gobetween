@@ -12,11 +12,11 @@ import (
 	"sync"
 	"time"
 
-	"../acme"
 	"../config"
 	"../core"
 	"../logging"
 	"../server"
+	"../services"
 	"../utils/codec"
 )
 
@@ -26,10 +26,11 @@ var servers = struct {
 	m map[string]core.Server
 }{m: make(map[string]core.Server)}
 
-var acmeService *acme.AcmeService
-
 /* default configuration for server */
 var defaults config.ConnectionOptions
+
+/* initialized services */
+var serviceInstances []core.Service
 
 /* original cfg read from the file */
 var originalCfg config.Config
@@ -51,8 +52,8 @@ func Initialize(cfg config.Config) {
 	//Initialize global sections
 	initConfigGlobals(&cfg)
 
-	//create acme services
-	acmeService = acme.NewAcmeService(cfg)
+	//create services
+	serviceInstances = services.Services(cfg)
 
 	// Go through config and start servers for each server
 	for name, serverCfg := range cfg.Servers {
@@ -95,8 +96,8 @@ func initConfigGlobals(cfg *config.Config) {
 			cfg.Acme.Challenge = "http"
 		}
 
-		if cfg.Acme.Bind == "" {
-			cfg.Acme.Bind = "0.0.0.0:80"
+		if cfg.Acme.HttpBind == "" {
+			cfg.Acme.HttpBind = "0.0.0.0:80"
 		}
 
 		if cfg.Acme.CacheDir == "" {
@@ -175,7 +176,7 @@ func Create(name string, cfg config.Server) error {
 		return err
 	}
 
-	server, err := server.New(name, c, []core.Service{acmeService})
+	server, err := server.New(name, c, serviceInstances)
 
 	if err != nil {
 		return err
@@ -206,8 +207,8 @@ func Delete(name string) error {
 	server.Stop()
 	delete(servers.m, name)
 
-	if acmeService != nil {
-		acmeService.Forget(server)
+	for _, s := range serviceInstances {
+		s.Forget(server)
 	}
 
 	return nil
@@ -341,10 +342,6 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 
 		if (len(server.Tls.AcmeHosts) == 0) && ((server.Tls.KeyPath == "") || (server.Tls.CertPath == "")) {
 			return config.Server{}, errors.New("tls requires specify either acme hosts or both key and cert paths")
-		}
-
-		if (len(server.Tls.AcmeHosts) != 0) && ((server.Tls.KeyPath == "") || (server.Tls.CertPath == "")) && acmeService == nil {
-			return config.Server{}, errors.New("Global Acme section is missing, but server requires it")
 		}
 
 	}
