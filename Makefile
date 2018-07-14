@@ -39,7 +39,7 @@ develop:
 	gvim &
 
 test:
-	@go test test/*.go
+	@go test -v test/*.go
 
 install: build
 	install -d ${DESTDIR}/usr/local/bin/
