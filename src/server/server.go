@@ -18,10 +18,10 @@ import (
 /**
  * Creates new Server based on cfg.Protocol
  */
-func New(name string, cfg config.Server) (core.Server, error) {
+func New(name string, cfg config.Server, services []core.Service) (core.Server, error) {
 	switch cfg.Protocol {
 	case "tls", "tcp":
-		return tcp.New(name, cfg)
+		return tcp.New(name, cfg, services)
 	case "udp":
 		return udp.New(name, cfg)
 	default:

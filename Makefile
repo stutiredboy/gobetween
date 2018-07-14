@@ -35,6 +35,9 @@ build-static:
 run: build
 	./bin/$(NAME) -c ./config/${NAME}.toml
 
+develop:
+	gvim &
+
 test:
 	@go test test/*.go
 
