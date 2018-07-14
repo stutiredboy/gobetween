@@ -68,7 +68,8 @@ deps: clean-deps
 	go get -v github.com/gin-gonic/gin
 	go get -v github.com/hashicorp/consul/api
 	go get -v github.com/spf13/cobra
-	go get -v github.com/microsoft/go-winio
+	go get -v github.com/Microsoft/go-winio
+	go get -v github.com/Azure/go-ansiterm
 	go get -v golang.org/x/sys/windows
 	go get -v github.com/inconshreveable/mousetrap
 	go get -v github.com/gin-contrib/cors
