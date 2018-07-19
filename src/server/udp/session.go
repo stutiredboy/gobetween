@@ -116,8 +116,8 @@ func (s *session) start() error {
 			case <-s.stopC:
 				stopped = true
 				log.Debug("Closing client session: ", s.clientAddr)
-				s.backendConn.Close()
 				s.notifyClosed()
+				s.backendConn.Close()
 				if t != nil {
 					t.Stop()
 				}
@@ -166,6 +166,13 @@ func (s *session) start() error {
 					return
 				}
 			}
+
+			if s.maxRequests > 0 {
+				if atomic.LoadUint64(&s._sentRequests) >= s.maxRequests {
+					s.stop()
+				}
+			}
+
 		}
 	}()
 	return nil
@@ -188,7 +195,7 @@ func (s *session) send(buf []byte) error {
 	s.scheduler.IncrementTx(*s.backend, uint(len(buf)))
 
 	if s.maxRequests > 0 {
-		if atomic.AddUint64(&s._sentRequests, 1) >= s.maxRequests {
+		if atomic.AddUint64(&s._sentRequests, 1) > s.maxRequests {
 			s.stop()
 		}
 	}
