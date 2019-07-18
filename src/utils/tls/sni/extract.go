@@ -1,10 +1,10 @@
+package sni
+
 /**
  * extract.go - extractor of hostname from ClientHello
  *
  * @author Illarion Kovalchuk <illarion.kovalchuk@gmail.com>
  */
-
-package sni
 
 import (
 	"bytes"

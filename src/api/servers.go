@@ -1,16 +1,18 @@
+package api
+
 /**
  * servers.go - /servers rest api implementation
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-package api
 
 import (
-	"../config"
-	"../manager"
-	"../stats"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/manager"
+	"github.com/yyyar/gobetween/stats"
 )
 
 /**

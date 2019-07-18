@@ -1,17 +1,18 @@
+package tcp
+
 /**
  * proxy.go - proxy utils
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package tcp
-
 import (
-	"../../core"
-	"../../logging"
 	"io"
 	"net"
 	"time"
+
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
 )
 
 const (

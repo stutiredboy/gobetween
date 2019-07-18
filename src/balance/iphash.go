@@ -1,15 +1,16 @@
+package balance
+
 /**
  * iphash.go - iphash balance impl
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package balance
-
 import (
-	"../core"
 	"errors"
 	"hash/fnv"
+
+	"github.com/yyyar/gobetween/core"
 )
 
 /**

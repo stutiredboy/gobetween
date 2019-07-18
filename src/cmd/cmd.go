@@ -1,12 +1,13 @@
+package cmd
+
 /**
  * cmd.go - command line runner
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-package cmd
 
 import (
-	"../config"
+	"github.com/yyyar/gobetween/config"
 )
 
 /**

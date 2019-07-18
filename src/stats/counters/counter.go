@@ -1,14 +1,15 @@
+package counters
+
 /**
  * counter.go - bandwidth counter
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package counters
-
 import (
-	"../../core"
 	"time"
+
+	"github.com/yyyar/gobetween/core"
 )
 
 /**

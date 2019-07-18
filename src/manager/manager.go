@@ -1,23 +1,27 @@
+package manager
+
 /**
  * manager.go - manages servers
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-package manager
 
 import (
 	"errors"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
 
-	"../config"
-	"../core"
-	"../logging"
-	"../server"
-	"../service"
-	"../utils/codec"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
+	"github.com/yyyar/gobetween/server"
+	"github.com/yyyar/gobetween/service"
+	"github.com/yyyar/gobetween/utils/codec"
+	"github.com/yyyar/gobetween/utils/profiler"
 )
 
 /* Map of app current servers */
@@ -63,6 +67,9 @@ func Initialize(cfg config.Config) {
 		}
 	}
 
+	// Initialize profiler
+	initProfiler(&cfg)
+
 	log.Info("Initialized")
 }
 
@@ -104,6 +111,18 @@ func initConfigGlobals(cfg *config.Config) {
 			cfg.Acme.CacheDir = "/tmp"
 		}
 	}
+}
+
+func initProfiler(cfg *config.Config) {
+	if cfg.Profiler == nil {
+		return
+	}
+
+	if !cfg.Profiler.Enabled {
+		return
+	}
+
+	profiler.Start(cfg.Profiler.Bind)
 }
 
 /**
@@ -242,11 +261,11 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 	/* ----- Prerequisites ----- */
 
 	if server.Bind == "" {
-		return config.Server{}, errors.New("No bind specified")
+		return config.Server{}, errors.New("No bind specified for server " + name)
 	}
 
 	if server.Discovery == nil {
-		return config.Server{}, errors.New("No .discovery specified")
+		return config.Server{}, errors.New("No .discovery specified for server " + name)
 	}
 
 	if server.Healthcheck == nil {
@@ -260,6 +279,7 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 	switch server.Healthcheck.Kind {
 	case
 		"ping",
+		"probe",
 		"exec",
 		"krb5",
 		"none":
@@ -281,6 +301,65 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 
 	if server.Healthcheck.Passes <= 0 {
 		server.Healthcheck.Passes = 1
+	}
+
+	if server.Healthcheck.Kind != "none" {
+		d, err := time.ParseDuration(server.Healthcheck.Interval)
+		if err != nil {
+			return config.Server{}, errors.New("Could not parse healtcheck interval: " + err.Error())
+		}
+
+		if d <= 0 {
+			return config.Server{}, errors.New("Healthcheck interval should be greater than 0s")
+		}
+	}
+
+	if server.Healthcheck.Kind == "probe" {
+
+		switch server.Healthcheck.ProbeProtocol {
+		case "tcp", "udp":
+		default:
+			return config.Server{}, errors.New("Unsupported probe_protocol")
+		}
+
+		if server.Healthcheck.ProbeSend == "" || server.Healthcheck.ProbeRecv == "" {
+			return config.Server{}, errors.New("probe healthcheck should have both probe_send and probe_recv specified")
+		}
+
+		if server.Healthcheck.ProbeStrategy == "" {
+			server.Healthcheck.ProbeStrategy = "starts_with"
+		}
+
+		var err error
+		server.Healthcheck.ProbeSend, err = strconv.Unquote("\"" + server.Healthcheck.ProbeSend + "\"")
+		if err != nil {
+			return config.Server{}, errors.New("probe_send has invalid syntax " + err.Error())
+		}
+
+		switch server.Healthcheck.ProbeStrategy {
+		case "starts_with":
+			if server.Healthcheck.ProbeRecvLen > 0 {
+				return config.Server{}, errors.New("probe_recv_len is redundant for 'starts_with' strategy")
+			}
+
+			var err error
+			server.Healthcheck.ProbeRecv, err = strconv.Unquote("\"" + server.Healthcheck.ProbeRecv + "\"")
+			if err != nil {
+				return config.Server{}, errors.New("probe_recv has invalid syntax " + err.Error())
+			}
+		case "regexp":
+			if server.Healthcheck.ProbeRecvLen == 0 {
+				return config.Server{}, errors.New("probe_recv_len required")
+			}
+
+			_, err := regexp.Compile(server.Healthcheck.ProbeRecv)
+			if err != nil {
+				return config.Server{}, errors.New("probe_recv has invalid syntax " + err.Error())
+			}
+		default:
+			return config.Server{}, errors.New("Unsupported probe_strategy " + server.Healthcheck.ProbeStrategy)
+		}
+
 	}
 
 	if server.ProxyProtocol != nil {
@@ -430,7 +509,7 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 			"udp",
 			"tcp":
 		case "":
-			server.Discovery.Failpolicy = "udp"
+			server.Discovery.SrvDnsProtocol = "udp"
 		default:
 			return config.Server{}, errors.New("Not supported srv_dns_protocol " + server.Discovery.SrvDnsProtocol)
 		}

@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.7.0]
+
+### New Features
+ - Prometheus Metrics Endpoint
+ - Improved UDP performance
+ - Added profiler (otpional, disabled by default)
+ - Added probe healthceck with different strategies
+
+
+### Fixed
+ - CGO Requirement for DNS has been replaced with netgo [#125](https://github.com/yyyar/gobetween/issues/125)
+ - UDP server was not performing access checks
+ - Empty `srv_dns_protocol` messed up failpolicy value [#193](https://github.com/yyyar/gobetween/issues/193)
+ - Fixed missing acme (letsencrypt) tls config during server start [#214](https://github.com/yyyar/gobetween/issues/214)
+
+
+## [0.6.1] - 2018-10-23
+This release brings only bugfixes
+
+### Fixed
+- No binaries were generated for some of the platforms during make dist
+- Regression of roundrobin balancer (it was acting on randomized list of backends)
+- Docker image was not working due to missing dynamic library dependencies
+- Gobetween became stuck in very rare cases during reading hostname info (sni) from new tls connections.
 
 
 ## [0.6.0] - 2018-08-21
@@ -24,7 +48,6 @@ This release brings some improvements and bugfixes.
 - Removed not necessary dependency on libacl1-dev
 - Replaced missing dependencies
 - Removed lxdhelpers (PR #113 by Joe Topjian)
-
 
 
 ## [0.5.0] - 2017-10-13

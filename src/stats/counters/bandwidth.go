@@ -1,13 +1,13 @@
+package counters
+
 /**
  * stats.go - bandwidth stats
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package counters
-
 import (
-	"../../core"
+	"github.com/yyyar/gobetween/core"
 )
 
 /**

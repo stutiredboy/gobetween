@@ -1,17 +1,18 @@
+package healthcheck
+
 /**
  * ping.go - TCP ping healthcheck
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package healthcheck
-
 import (
-	"../config"
-	"../core"
-	"../logging"
 	"net"
 	"time"
+
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
 )
 
 /**

@@ -1,10 +1,10 @@
+package udp
+
 /**
  * server.go - UDP server implementation
  *
  * @author Illarion Kovalchuk <illarion.kovalchuk@gmail.com>
  */
-
-package udp
 
 import (
 	"fmt"
@@ -13,21 +13,24 @@ import (
 	"sync/atomic"
 	"time"
 
-	"../../balance"
-	"../../config"
-	"../../core"
-	"../../discovery"
-	"../../healthcheck"
-	"../../logging"
-	"../../stats"
-	"../../utils"
-	"../modules/access"
-	"../scheduler"
-	"./session"
+	"github.com/yyyar/gobetween/balance"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/discovery"
+	"github.com/yyyar/gobetween/healthcheck"
+	"github.com/yyyar/gobetween/logging"
+	"github.com/yyyar/gobetween/server/modules/access"
+	"github.com/yyyar/gobetween/server/scheduler"
+	"github.com/yyyar/gobetween/server/udp/session"
+	"github.com/yyyar/gobetween/stats"
+	"github.com/yyyar/gobetween/utils"
+	"github.com/eric-lindau/udpfacade"
 )
 
 const UDP_PACKET_SIZE = 65507
 const CLEANUP_EVERY = time.Second * 2
+
+var log = logging.For("udp/server")
 
 /**
  * UDP server implementation
@@ -65,8 +68,6 @@ type Server struct {
  * Creates new UDP server
  */
 func New(name string, cfg config.Server) (*Server, error) {
-
-	log := logging.For("udp/server")
 
 	statsHandler := stats.NewHandler(name)
 	scheduler := &scheduler.Scheduler{
@@ -109,8 +110,6 @@ func (this *Server) Cfg() config.Server {
  */
 func (this *Server) Start() error {
 
-	log := logging.For("udp/server")
-
 	// Start listening
 	if err := this.listen(); err != nil {
 		return fmt.Errorf("Could not start listening UDP: %v", err)
@@ -128,7 +127,7 @@ func (this *Server) Start() error {
 			select {
 			case <-ticker.C:
 				this.cleanup()
-			/* handle server stop */
+				/* handle server stop */
 			case <-this.stop:
 				log.Info("Stopping ", this.name)
 				atomic.StoreUint32(&this.stopped, 1)
@@ -143,7 +142,7 @@ func (this *Server) Start() error {
 				this.mu.Lock()
 				for k, s := range this.sessions {
 					delete(this.sessions, k)
-					s.CloseConn()
+					s.Close()
 				}
 				this.mu.Unlock()
 
@@ -177,20 +176,20 @@ func (this *Server) listen() error {
  * Start serving
  */
 func (this *Server) serve() {
-	log := logging.For("udp/server")
 
 	cfg := session.Config{
 		MaxRequests:        this.cfg.Udp.MaxRequests,
 		MaxResponses:       this.cfg.Udp.MaxResponses,
 		ClientIdleTimeout:  utils.ParseDurationOrDefault(*this.cfg.ClientIdleTimeout, 0),
 		BackendIdleTimeout: utils.ParseDurationOrDefault(*this.cfg.BackendIdleTimeout, 0),
+		Transparent:        this.cfg.Udp.Transparent,
 	}
 
 	// Main loop goroutine - reads incoming data and decides what to do
 	go func() {
 
+		buf := make([]byte, UDP_PACKET_SIZE)
 		for {
-			buf := make([]byte, UDP_PACKET_SIZE)
 			n, clientAddr, err := this.serverConn.ReadFromUDP(buf)
 
 			if err != nil {
@@ -203,9 +202,16 @@ func (this *Server) serve() {
 				continue
 			}
 
+			if this.access != nil {
+				if !this.access.Allows(&clientAddr.IP) {
+					log.Debug("Client disallowed to connect: ", clientAddr.IP)
+					continue
+				}
+			}
+
 			//special case for single request mode
 			if cfg.MaxRequests == 1 {
-				err := this.fireAndForget(clientAddr, buf[0:n])
+				err := this.fireAndForget(clientAddr, buf[:n])
 
 				if err != nil {
 					log.Errorf("Error sending data to backend: %v ", err)
@@ -214,12 +220,7 @@ func (this *Server) serve() {
 				continue
 			}
 
-			err = this.proxy(cfg, clientAddr, buf[0:n])
-
-			if err != nil {
-				log.Errorf("Failed to proxy packet from client %v: %v", clientAddr, err)
-				continue
-			}
+			this.proxy(cfg, clientAddr, buf[:n])
 
 		}
 	}()
@@ -235,17 +236,17 @@ func (this *Server) cleanup() {
 	for k, s := range this.sessions {
 		if s.IsDone() {
 			delete(this.sessions, k)
-			s.CloseConn()
 		}
 
 	}
 
+	this.scheduler.StatsHandler.Connections <- uint(len(this.sessions))
 }
 
 /**
  * Elect and connect to backend
  */
-func (this *Server) electAndConnect(clientAddr *net.UDPAddr) (*net.UDPConn, *core.Backend, error) {
+func (this *Server) electAndConnect(clientAddr *net.UDPAddr) (net.Conn, *core.Backend, error) {
 	backend, err := this.scheduler.TakeBackend(core.UdpContext{
 		ClientAddr: *clientAddr,
 	})
@@ -264,69 +265,76 @@ func (this *Server) electAndConnect(clientAddr *net.UDPAddr) (*net.UDPConn, *cor
 		return nil, nil, fmt.Errorf("Could not resolve udp address %s: %v", addrStr, err)
 	}
 
-	conn, err := net.DialUDP("udp", nil, addr)
-	if err != nil {
-		return nil, nil, fmt.Errorf("Could not dial UDP addr %v: %v", addr, err)
+	var conn net.Conn
+	if this.cfg.Udp.Transparent {
+		conn, err = udpfacade.DialUDPFrom(clientAddr, addr)
+		if err != nil {
+			return nil, nil, fmt.Errorf("Could not dial UDP addr %v from %v: %v", addr, clientAddr, err)
+		}
+	} else {
+		conn, err = net.DialUDP("udp", nil, addr)
+		if err != nil {
+			return nil, nil, fmt.Errorf("Could not dial UDP addr %v: %v", addr, err)
+		}
 	}
 
 	return conn, backend, nil
 }
 
 /**
- * Get the session and send data via chosen session
+ * Get or create session
  */
-func (this *Server) proxy(cfg session.Config, clientAddr *net.UDPAddr, buf []byte) error {
+func (this *Server) getOrCreateSession(cfg session.Config, clientAddr *net.UDPAddr) (*session.Session, error) {
+	key := clientAddr.String()
 
-	log := logging.For("udp/server")
+	this.mu.Lock()
+	defer this.mu.Unlock()
 
-	getOrCreateSession := func() (*session.Session, error) {
-		key := clientAddr.String()
+	s, ok := this.sessions[key]
 
-		this.mu.Lock()
-		defer this.mu.Unlock()
-
-		s, ok := this.sessions[key]
-
-		//session exists and is not done yet
-		if ok && !s.IsDone() {
-			return s, nil
-		}
-
-		//session exists but should be replaced with a new one
-		if ok {
-			delete(this.sessions, key)
-			s.CloseConn()
-		}
-
-		conn, backend, err := this.electAndConnect(clientAddr)
-		if err != nil {
-			return nil, fmt.Errorf("Could not elect/connect to backend: %v", err)
-		}
-
-		s = session.NewSession(clientAddr, conn, *backend, this.scheduler, cfg)
-		s.ListenResponses(this.serverConn)
-		this.sessions[key] = s
-
+	//session exists and is not done yet
+	if ok && !s.IsDone() {
 		return s, nil
 	}
 
-	go func() {
-		s, err := getOrCreateSession()
+	//session exists but should be replaced with a new one
+	if ok {
+		go func() { s.Close() }()
+	}
 
-		if err != nil {
-			log.Error(err)
-			return
-		}
+	conn, backend, err := this.electAndConnect(clientAddr)
+	if err != nil {
+		return nil, fmt.Errorf("Could not elect/connect to backend: %v", err)
+	}
 
-		err = s.Write(buf)
-		if err != nil {
-			log.Errorf("Could not write data to UDP 'session' %v: %v", s, err)
-			return
-		}
+	s = session.NewSession(clientAddr, conn, *backend, this.scheduler, cfg)
+	if !cfg.Transparent {
+		s.ListenResponses(this.serverConn)
+	}
 
-	}()
+	this.sessions[key] = s
 
-	return nil
+	this.scheduler.StatsHandler.Connections <- uint(len(this.sessions))
+
+	return s, nil
+}
+
+/**
+ * Get the session and send data via chosen session
+ */
+func (this *Server) proxy(cfg session.Config, clientAddr *net.UDPAddr, buf []byte) {
+
+	s, err := this.getOrCreateSession(cfg, clientAddr)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	err = s.Write(buf)
+	if err != nil {
+		log.Errorf("Could not write data to UDP 'session' %v: %v", s, err)
+		return
+	}
 
 }
 
@@ -335,27 +343,21 @@ func (this *Server) proxy(cfg session.Config, clientAddr *net.UDPAddr, buf []byt
  */
 func (this *Server) fireAndForget(clientAddr *net.UDPAddr, buf []byte) error {
 
-	log := logging.For("udp/server")
 	conn, backend, err := this.electAndConnect(clientAddr)
 	if err != nil {
 		return fmt.Errorf("Could not elect or connect to backend: %v", err)
 	}
 
-	go func() {
+	n, err := conn.Write(buf)
+	if err != nil {
+		return fmt.Errorf("Could not write data to %v: %v", clientAddr, err)
+	}
 
-		n, err := conn.Write(buf)
-		if err != nil {
-			log.Errorf("Could not write data to %v: %v", clientAddr, err)
-			return
-		}
+	if n != len(buf) {
+		return fmt.Errorf("Failed to send full packet, expected size %d, actually sent %d", len(buf), n)
+	}
 
-		if n != len(buf) {
-			log.Errorf("Failed to send full packet, expected size %d, actually sent %d", len(buf), n)
-			return
-		}
-
-		this.scheduler.IncrementTx(*backend, uint(n))
-	}()
+	this.scheduler.IncrementTx(*backend, uint(n))
 
 	return nil
 

@@ -1,10 +1,10 @@
+package discovery
+
 /**
  * srv.go - SRV record DNS resolve discovery implementation
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-
-package discovery
 
 import (
 	"errors"
@@ -12,11 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"../config"
-	"../core"
-	"../logging"
-	"../utils"
 	"github.com/miekg/dns"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
+	"github.com/yyyar/gobetween/utils"
 )
 
 const (

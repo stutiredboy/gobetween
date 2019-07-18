@@ -1,3 +1,5 @@
+package utils
+
 /**
  * exec.go - Exec external process with timeout
  *
@@ -5,12 +7,11 @@
  * @author Ievgen Ponomarenko <kikomdev@gmail.com>
  */
 
-package utils
-
 import (
-	"../logging"
 	"os/exec"
 	"time"
+
+	"github.com/yyyar/gobetween/logging"
 )
 
 /**

@@ -1,15 +1,16 @@
+package access
+
 /**
  * access.go - access
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package access
-
 import (
-	"../../../config"
 	"errors"
 	"net"
+
+	"github.com/yyyar/gobetween/config"
 )
 
 /**

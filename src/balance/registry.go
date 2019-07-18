@@ -1,18 +1,17 @@
+package balance
+
 /**
  * registry.go - balancers registry
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package balance
-
 import (
 	"reflect"
 
-	"./middleware"
-
-	"../config"
-	"../core"
+	"github.com/yyyar/gobetween/balance/middleware"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
 )
 
 /**

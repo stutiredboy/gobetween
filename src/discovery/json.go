@@ -1,11 +1,11 @@
+package discovery
+
 /**
  * docker.go - Docker API discovery implementation
  *
  * @author Ievgen Ponomarenko <kikomdev@gmail.com>
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-
-package discovery
 
 import (
 	"errors"
@@ -15,11 +15,11 @@ import (
 	"strconv"
 	"time"
 
-	"../config"
-	"../core"
-	"../logging"
-	"../utils"
 	"github.com/elgs/gojq"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
+	"github.com/yyyar/gobetween/utils"
 )
 
 const (

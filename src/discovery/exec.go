@@ -1,3 +1,5 @@
+package discovery
+
 /**
  * exec.go - Exec external process discovery implementation
  *
@@ -5,16 +7,15 @@
  * @author Ievgen Ponomarenko <kikomdev@gmail.com>
  */
 
-package discovery
-
 import (
-	"../config"
-	"../core"
-	"../logging"
-	"../utils"
-	"../utils/parsers"
 	"strings"
 	"time"
+
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
+	"github.com/yyyar/gobetween/utils"
+	"github.com/yyyar/gobetween/utils/parsers"
 )
 
 const (

@@ -1,17 +1,20 @@
+package cmd
+
 /**
  * from-consul.go - pull config from consul and run
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-package cmd
 
 import (
-	"../config"
-	"../info"
-	"../utils/codec"
+	"log"
+
 	consul "github.com/hashicorp/consul/api"
 	"github.com/spf13/cobra"
-	"log"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/info"
+	"github.com/yyyar/gobetween/utils"
+	"github.com/yyyar/gobetween/utils/codec"
 )
 
 /* Parsed options */
@@ -58,8 +61,13 @@ var FromConsulCmd = &cobra.Command{
 			log.Fatal("Empty value for key " + consulKey)
 		}
 
+		datastr := string(pair.Value)
+		if isConfigEnvVars {
+			datastr = utils.SubstituteEnvVars(datastr)
+		}
+
 		var cfg config.Config
-		if err := codec.Decode(string(pair.Value), &cfg, format); err != nil {
+		if err := codec.Decode(datastr, &cfg, format); err != nil {
 			log.Fatal(err)
 		}
 

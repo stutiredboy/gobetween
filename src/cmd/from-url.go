@@ -1,18 +1,21 @@
+package cmd
+
 /**
  * from-url.go - pull config from url and run
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-package cmd
 
 import (
-	"../config"
-	"../info"
-	"../utils/codec"
-	"github.com/spf13/cobra"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/spf13/cobra"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/info"
+	"github.com/yyyar/gobetween/utils"
+	"github.com/yyyar/gobetween/utils/codec"
 )
 
 /**
@@ -50,8 +53,13 @@ var FromUrlCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
+		datastr := string(content)
+		if isConfigEnvVars {
+			datastr = utils.SubstituteEnvVars(datastr)
+		}
+
 		var cfg config.Config
-		if err := codec.Decode(string(content), &cfg, format); err != nil {
+		if err := codec.Decode(datastr, &cfg, format); err != nil {
 			log.Fatal(err)
 		}
 

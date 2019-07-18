@@ -1,16 +1,16 @@
+package balance
+
 /**
  * roundrobin.go - roundrobin balance impl
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package balance
-
 import (
 	"errors"
 	"sort"
 
-	"../core"
+	"github.com/yyyar/gobetween/core"
 )
 
 /**

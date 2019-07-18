@@ -1,21 +1,22 @@
+package discovery
+
 /**
  * docker.go - Docker API discovery implementation
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package discovery
-
 import (
-	"../config"
-	"../core"
-	"../logging"
-	"../utils"
 	"errors"
 	"fmt"
-	"github.com/fsouza/go-dockerclient"
 	"regexp"
 	"time"
+
+	docker "github.com/fsouza/go-dockerclient"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
+	"github.com/yyyar/gobetween/utils"
 )
 
 const (

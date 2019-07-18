@@ -1,16 +1,17 @@
+package healthcheck
+
 /**
  * worker.go - Healtheck worker
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package healthcheck
-
 import (
-	"../config"
-	"../core"
-	"../logging"
 	"time"
+
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
 )
 
 /**

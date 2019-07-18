@@ -1,10 +1,10 @@
+package discovery
+
 /**
  * lxd.go - LXD API discovery implementation
  *
  * @author Joe Topjian <joe@topjian.net>
  */
-
-package discovery
 
 import (
 	"encoding/pem"
@@ -13,15 +13,14 @@ import (
 	"strings"
 	"time"
 
-	"../config"
-	"../core"
-	"../logging"
-	"../utils"
-
 	lxd "github.com/lxc/lxd/client"
 	lxd_config "github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared"
 	lxd_api "github.com/lxc/lxd/shared/api"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
+	"github.com/yyyar/gobetween/utils"
 )
 
 const (

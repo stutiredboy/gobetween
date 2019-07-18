@@ -1,3 +1,5 @@
+package core
+
 /**
  * server.go - server
  *
@@ -5,10 +7,8 @@
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package core
-
 import (
-	"../config"
+	"github.com/yyyar/gobetween/config"
 )
 
 /**

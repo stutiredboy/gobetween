@@ -1,10 +1,10 @@
+package stats
+
 /**
  * store.go - stats storage and getter
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-
-package stats
 
 import (
 	"sync"

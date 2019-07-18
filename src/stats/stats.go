@@ -1,13 +1,13 @@
+package stats
+
 /**
  * stats.go - server stats object
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package stats
-
 import (
-	"../core"
+	"github.com/yyyar/gobetween/core"
 )
 
 /**

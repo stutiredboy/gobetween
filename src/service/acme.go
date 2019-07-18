@@ -1,14 +1,15 @@
 package service
 
 import (
-	"../config"
-	"../core"
-	"../server/tcp"
 	"context"
 	"fmt"
-	"golang.org/x/crypto/acme/autocert"
 	"net/http"
 	"sync"
+
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/server/tcp"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 /**

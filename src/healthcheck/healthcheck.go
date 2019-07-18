@@ -1,14 +1,14 @@
+package healthcheck
+
 /**
  * healthcheck.go - Healtheck
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package healthcheck
-
 import (
-	"../config"
-	"../core"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
 )
 
 /**
@@ -64,6 +64,7 @@ var registry = make(map[string]CheckFunc)
  */
 func init() {
 	registry["ping"] = ping
+	registry["probe"] = probe
 	registry["exec"] = exec
 	registry["krb5"] = krb5
 	registry["none"] = nil

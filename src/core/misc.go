@@ -1,10 +1,10 @@
+package core
+
 /**
  * misc.go
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-
-package core
 
 /**
  * Next r/w operation data counters

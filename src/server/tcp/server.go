@@ -1,29 +1,29 @@
+package tcp
+
 /**
  * server.go - proxy server implementation
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package tcp
-
 import (
 	"crypto/tls"
 	"net"
 	"time"
 
-	"../../balance"
-	"../../config"
-	"../../core"
-	"../../discovery"
-	"../../healthcheck"
-	"../../logging"
-	"../../stats"
-	"../../utils"
-	"../../utils/proxyprotocol"
-	tlsutil "../../utils/tls"
-	"../../utils/tls/sni"
-	"../modules/access"
-	"../scheduler"
+	"github.com/yyyar/gobetween/balance"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/discovery"
+	"github.com/yyyar/gobetween/healthcheck"
+	"github.com/yyyar/gobetween/logging"
+	"github.com/yyyar/gobetween/server/modules/access"
+	"github.com/yyyar/gobetween/server/scheduler"
+	"github.com/yyyar/gobetween/stats"
+	"github.com/yyyar/gobetween/utils"
+	"github.com/yyyar/gobetween/utils/proxyprotocol"
+	tlsutil "github.com/yyyar/gobetween/utils/tls"
+	"github.com/yyyar/gobetween/utils/tls/sni"
 )
 
 /**
@@ -118,11 +118,6 @@ func New(name string, cfg config.Server) (*Server, error) {
 		return nil, err
 	}
 
-	server.tlsConfig, err = tlsutil.MakeTlsConfig(cfg.Tls, server.GetCertificate)
-	if err != nil {
-		return nil, err
-	}
-
 	log.Info("Creating '", name, "': ", cfg.Bind, " ", cfg.Balance, " ", cfg.Discovery.Kind, " ", cfg.Healthcheck.Kind)
 
 	return server, nil
@@ -139,6 +134,12 @@ func (this *Server) Cfg() config.Server {
  * Start server
  */
 func (this *Server) Start() error {
+
+	var err error
+	this.tlsConfig, err = tlsutil.MakeTlsConfig(this.cfg.Tls, this.GetCertificate)
+	if err != nil {
+		return err
+	}
 
 	go func() {
 
@@ -357,9 +358,17 @@ func (this *Server) handle(ctx *core.TcpContext) {
 		select {
 		case s, ok := <-cs:
 			isRx = ok
+			if !ok {
+				cs = nil
+				continue
+			}
 			this.scheduler.IncrementRx(*backend, s.CountWrite)
 		case s, ok := <-bs:
 			isTx = ok
+			if !ok {
+				bs = nil
+				continue
+			}
 			this.scheduler.IncrementTx(*backend, s.CountWrite)
 		}
 	}

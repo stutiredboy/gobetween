@@ -1,16 +1,16 @@
+package discovery
+
 /**
  * static.go - static list discovery implementation
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package discovery
-
 import (
-	"../config"
-	"../core"
-	"../logging"
-	"../utils/parsers"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
+	"github.com/yyyar/gobetween/utils/parsers"
 )
 
 /**

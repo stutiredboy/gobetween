@@ -1,15 +1,15 @@
+package balance
+
 /**
  * leastconn.go - leastconn balance impl
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package balance
-
 import (
 	"errors"
 
-	"../core"
+	"github.com/yyyar/gobetween/core"
 )
 
 /**

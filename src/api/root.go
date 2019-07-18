@@ -1,17 +1,19 @@
+package api
+
 /**
  * root.go - / rest api implementation
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-package api
 
 import (
-	"../info"
-	"../manager"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/yyyar/gobetween/info"
+	"github.com/yyyar/gobetween/manager"
 )
 
 /**

@@ -1,14 +1,15 @@
+package counters
+
 /**
  * backendscounter.go - bandwidth counter for backends pool
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package counters
-
 import (
-	"../../core"
 	"time"
+
+	"github.com/yyyar/gobetween/core"
 )
 
 const (

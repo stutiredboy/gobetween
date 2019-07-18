@@ -1,3 +1,5 @@
+package server
+
 /**
  * server.go - server creator
  *
@@ -5,14 +7,13 @@
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package server
-
 import (
-	"../config"
-	"../core"
-	"./tcp"
-	"./udp"
 	"errors"
+
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/server/tcp"
+	"github.com/yyyar/gobetween/server/udp"
 )
 
 /**

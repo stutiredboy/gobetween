@@ -1,10 +1,10 @@
+package access
+
 /**
  * rule.go - access rule
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-
-package access
 
 import (
 	"errors"

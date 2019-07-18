@@ -1,14 +1,16 @@
+package codec
+
 /**
  * codec.go - decoding utils
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-package codec
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
+
 	"github.com/burntsushi/toml"
 )
 

@@ -1,3 +1,5 @@
+package parsers
+
 /**
  * backend.go - backend parser utils
  *
@@ -5,14 +7,13 @@
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package parsers
-
 import (
-	"../../core"
 	"errors"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/yyyar/gobetween/core"
 )
 
 const (

@@ -1,21 +1,22 @@
+package discovery
+
 /**
  * consul.go - Consul API discovery implementation
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package discovery
-
 import (
-	"../config"
-	"../core"
-	"../logging"
-	"../utils"
 	"fmt"
-	consul "github.com/hashicorp/consul/api"
 	"net/http"
 	"strings"
 	"time"
+
+	consul "github.com/hashicorp/consul/api"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
+	"github.com/yyyar/gobetween/utils"
 )
 
 const (
@@ -74,6 +75,7 @@ func consulFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
 
 	// Create consul client
 	client, _ := consul.NewClient(&consul.Config{
+		Token:      cfg.ConsulAclToken,
 		Scheme:     scheme,
 		Address:    cfg.ConsulHost,
 		Datacenter: cfg.ConsulDatacenter,
@@ -115,7 +117,7 @@ func consulFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
 		} else {
 			host = entry.Node.Address
 		}
-		
+
 		backends = append(backends, core.Backend{
 			Target: core.Target{
 				Host: host,

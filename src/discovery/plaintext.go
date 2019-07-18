@@ -1,3 +1,5 @@
+package discovery
+
 /**
  * plaintext.go - Plaintext discovery implementation
  *
@@ -5,18 +7,17 @@
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package discovery
-
 import (
-	"../config"
-	"../core"
-	"../logging"
-	"../utils"
-	"../utils/parsers"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
+	"github.com/yyyar/gobetween/utils"
+	"github.com/yyyar/gobetween/utils/parsers"
 )
 
 const (

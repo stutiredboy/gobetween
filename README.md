@@ -5,6 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/yyyar/gobetween)](https://goreportcard.com/report/github.com/yyyar/gobetween)
 [![Docs](https://img.shields.io/badge/docs-current-brightgreen.svg)](https://github.com/yyyar/gobetween/wiki)
 [![Docker](https://img.shields.io/docker/pulls/yyyar/gobetween.svg)](https://hub.docker.com/r/yyyar/gobetween/)
+[![Snap Status](https://build.snapcraft.io/badge/yyyar/gobetween.svg)](https://build.snapcraft.io/user/yyyar/gobetween)
 [![Telegram](https://img.shields.io/badge/telegram-chat-blue.svg)](https://t.me/joinchat/GdlUlg_gRfchk1BORU82PA)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
@@ -18,9 +19,9 @@
 * [Fast L4 Load Balancing](https://github.com/yyyar/gobetween/wiki)
   * **TCP** - with optional [The PROXY Protocol](https://github.com/yyyar/gobetween/wiki/Proxy-Protocol) support
   * **TLS** - [TLS Termination](https://github.com/yyyar/gobetween/wiki/Protocols#tls) + [ACME](https://github.com/yyyar/gobetween/wiki/Protocols#tls) & [TLS Proxy](https://github.com/yyyar/gobetween/wiki/Tls-Proxying)
-  * **UDP** - with optional virtual sessions
+  * **UDP** - with optional virtual sessions and transparent mode
 
-  
+
 * [Clear & Flexible Configuration](https://github.com/yyyar/gobetween/wiki/Configuration) with [TOML](config/gobetween.toml) or [JSON](config/gobetween.json)
   * **File** - read configuration from the file
   * **URL** - query URL by HTTP and get configuration from the response body 
@@ -35,7 +36,7 @@
 * [Discovery](https://github.com/yyyar/gobetween/wiki/Discovery)
   * **Static** - hardcode backends list in config file
   * **Docker** - query backends from Docker / Swarm API filtered by label
-  * **Exec** - execte arbitrary program and get backends from it's stdout
+  * **Exec** - execute arbitrary program and get backends from its stdout
   * **JSON** - query arbitrary http url and pick backends from response json (of any structure)
   * **Plaintext** - query arbitrary http and parse backends from response text with customized regexp
   * **SRV** - query DNS server and get backends from SRV records
@@ -43,8 +44,9 @@
   * **LXD** - query backends from LXD
 
 * [Healthchecks](https://github.com/yyyar/gobetween/wiki/Healthchecks)
-  * **Ping** - simple TCP ping healtcheck
-  * **Exec** - execute arbitrary program passing host & port as options, and read healtcheck status from the stdout
+  * **Ping** - simple TCP ping healthcheck
+  * **Exec** - execute arbitrary program passing host & port as options, and read healthcheck status from the stdout
+  * **Probe** - send specific bytes to backend (udp, tcp or tls) and expect correct answer (bytes or regexp)
 
 * [Balancing Strategies](https://github.com/yyyar/gobetween/wiki/Balancing) (with [SNI](https://github.com/yyyar/gobetween/wiki/Server-Name-Indication) support)
   * **Weight** - select backend from pool based relative weights of backends
@@ -54,7 +56,7 @@
   * **Leastconn** - select backend with least active connections
   * **Leastbandwidth** -  backends with least bandwidth
 
-* Integrates seamlessly with Docker and with any custom system (thanks to Exec discovery and healtchecks)
+* Integrates seamlessly with Docker and with any custom system (thanks to Exec discovery and healthchecks)
 
 * Single binary distribution
 
@@ -64,16 +66,16 @@
 
 ## Usage
 
-* [Download and Install](https://github.com/yyyar/gobetween/wiki/Installation)
+* Install with snap: https://snapcraft.io/gobetween
+* [Other Installation Options](https://github.com/yyyar/gobetween/wiki/Installation)
 * [Read Configuration Reference](https://github.com/yyyar/gobetween/wiki)
 * Execute `gobetween --help` for full help on all available commands and options.
 
-
 ## Hacking
 
-* Install Go 1.10+ https://golang.org/
+* Install Go 1.12+ https://golang.org/
 * `$ git clone git@github.com:yyyar/gobetween.git`
-* `$ make deps`
+* `$ make`
 * `$ make run`
 
 ### Debug and Test
@@ -94,11 +96,18 @@ Put `localhost:8000` and `localhost:8001` to `static_list` of static discovery i
 
 * `$ curl http://localhost:3000`
 
+Enable [profiler](https://blog.golang.org/profiling-go-programs) and debug issues you encounter
+```
+[profiler]
+enabled = true     # false | true
+bind    = ":6060"  # "host:port"
+```
+
 ## Performance
 It's Fast! See [Performance Testing](https://github.com/yyyar/gobetween/wiki/Performance-tests)
 
 ## The Name
-It's play on words: gobetween ("go between"). 
+It's a play on words: gobetween ("go between"). 
 
 Also, it's written in Go, and it's a proxy so it's something that stays between 2 parties :smile:
 

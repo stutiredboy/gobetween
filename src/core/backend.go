@@ -1,10 +1,10 @@
+package core
+
 /**
  * backend.go - backend definition
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-
-package core
 
 import (
 	"fmt"

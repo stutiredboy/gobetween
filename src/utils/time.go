@@ -1,10 +1,10 @@
+package utils
+
 /**
  * time.go - Time utils
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-
-package utils
 
 import (
 	"time"

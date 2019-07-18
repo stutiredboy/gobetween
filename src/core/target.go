@@ -1,9 +1,10 @@
+package core
+
 /**
  * target.go - backend target
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-package core
 
 /**
  * Target host and port

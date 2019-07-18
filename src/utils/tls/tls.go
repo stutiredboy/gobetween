@@ -1,17 +1,17 @@
+package tls
+
 /**
  * tls.go - Tls mapping utils
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package tls
-
 import (
 	"crypto/tls"
 	"crypto/x509"
 	"io/ioutil"
 
-	"../../config"
+	"github.com/yyyar/gobetween/config"
 )
 
 /**

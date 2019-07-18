@@ -1,3 +1,5 @@
+package middleware
+
 /**
  * sni.go - sni middleware
  *
@@ -5,16 +7,14 @@
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
 
-package middleware
-
 import (
 	"errors"
 	"regexp"
 	"strings"
 
-	"../../config"
-	"../../core"
-	"../../logging"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
 )
 
 /**

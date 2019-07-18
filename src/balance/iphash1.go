@@ -1,15 +1,16 @@
+package balance
+
 /**
  * iphash1.go - semi-consistent iphash balance impl
  *
  * @author Illarion Kovalchuk <illarion.kovalchuk@gmail.com>
  */
 
-package balance
-
 import (
-	"../core"
 	"errors"
 	"hash/fnv"
+
+	"github.com/yyyar/gobetween/core"
 )
 
 /**

@@ -1,15 +1,16 @@
+package api
+
 /**
  * api.go - rest api implementation
  *
  * @author Yaroslav Pogrebnyak <yyyaroslav@gmail.com>
  */
-package api
 
 import (
-	"../config"
-	"../logging"
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/logging"
 )
 
 /* gin app */
