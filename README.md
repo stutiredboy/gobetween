@@ -47,6 +47,7 @@
   * **Ping** - simple TCP ping healthcheck
   * **Exec** - execute arbitrary program passing host & port as options, and read healthcheck status from the stdout
   * **Probe** - send specific bytes to backend (udp, tcp or tls) and expect correct answer (bytes or regexp)
+  * **Krb5** - send kerberos v5 authenticate request to backend (udp) and expect kinit success
 
 * [Balancing Strategies](https://github.com/yyyar/gobetween/wiki/Balancing) (with [SNI](https://github.com/yyyar/gobetween/wiki/Server-Name-Indication) support)
   * **Weight** - select backend from pool based relative weights of backends
