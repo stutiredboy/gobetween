@@ -1,4 +1,4 @@
-module github.com/yyyar/gobetween
+module github.com/stutiredboy/gobetween
 
 go 1.12
 

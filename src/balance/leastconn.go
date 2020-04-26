@@ -9,7 +9,7 @@ package balance
 import (
 	"errors"
 
-	"github.com/yyyar/gobetween/core"
+	"github.com/stutiredboy/gobetween/core"
 )
 
 /**

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 
-	"github.com/yyyar/gobetween/logging"
+	"github.com/stutiredboy/gobetween/logging"
 )
 
 func Start(bind string) {

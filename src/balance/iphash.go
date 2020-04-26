@@ -10,7 +10,7 @@ import (
 	"errors"
 	"hash/fnv"
 
-	"github.com/yyyar/gobetween/core"
+	"github.com/stutiredboy/gobetween/core"
 )
 
 /**

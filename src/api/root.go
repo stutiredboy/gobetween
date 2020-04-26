@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/yyyar/gobetween/info"
-	"github.com/yyyar/gobetween/manager"
+	"github.com/stutiredboy/gobetween/info"
+	"github.com/stutiredboy/gobetween/manager"
 )
 
 /**

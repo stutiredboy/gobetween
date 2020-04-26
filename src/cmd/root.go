@@ -10,7 +10,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/yyyar/gobetween/info"
+	"github.com/stutiredboy/gobetween/info"
 )
 
 /* Persistent parsed options */

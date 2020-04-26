@@ -7,8 +7,8 @@ package healthcheck
  */
 
 import (
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
+	"github.com/stutiredboy/gobetween/config"
+	"github.com/stutiredboy/gobetween/core"
 )
 
 /**

@@ -7,9 +7,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/server/scheduler"
+	"github.com/stutiredboy/gobetween/core"
+	"github.com/stutiredboy/gobetween/logging"
+	"github.com/stutiredboy/gobetween/server/scheduler"
 )
 
 const (

@@ -11,7 +11,7 @@ import (
 	"crypto/x509"
 	"io/ioutil"
 
-	"github.com/yyyar/gobetween/config"
+	"github.com/stutiredboy/gobetween/config"
 )
 
 /**

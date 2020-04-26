@@ -8,7 +8,7 @@ package core
  */
 
 import (
-	"github.com/yyyar/gobetween/config"
+	"github.com/stutiredboy/gobetween/config"
 )
 
 /**

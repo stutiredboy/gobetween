@@ -7,10 +7,10 @@ package discovery
  */
 
 import (
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/utils/parsers"
+	"github.com/stutiredboy/gobetween/config"
+	"github.com/stutiredboy/gobetween/core"
+	"github.com/stutiredboy/gobetween/logging"
+	"github.com/stutiredboy/gobetween/utils/parsers"
 )
 
 /**
