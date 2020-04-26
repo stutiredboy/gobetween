@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/stutiredboy/gobetween/core"
+	"github.com/yyyar/gobetween/core"
 )
 
 const (

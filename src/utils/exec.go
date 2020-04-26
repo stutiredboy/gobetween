@@ -11,7 +11,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/stutiredboy/gobetween/logging"
+	"github.com/yyyar/gobetween/logging"
 )
 
 /**

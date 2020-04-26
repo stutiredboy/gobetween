@@ -7,7 +7,7 @@ package stats
  */
 
 import (
-	"github.com/stutiredboy/gobetween/core"
+	"github.com/yyyar/gobetween/core"
 )
 
 /**

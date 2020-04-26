@@ -10,9 +10,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stutiredboy/gobetween/config"
-	"github.com/stutiredboy/gobetween/manager"
-	"github.com/stutiredboy/gobetween/stats"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/manager"
+	"github.com/yyyar/gobetween/stats"
 )
 
 /**

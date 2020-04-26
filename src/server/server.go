@@ -10,10 +10,10 @@ package server
 import (
 	"errors"
 
-	"github.com/stutiredboy/gobetween/config"
-	"github.com/stutiredboy/gobetween/core"
-	"github.com/stutiredboy/gobetween/server/tcp"
-	"github.com/stutiredboy/gobetween/server/udp"
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/server/tcp"
+	"github.com/yyyar/gobetween/server/udp"
 )
 
 /**

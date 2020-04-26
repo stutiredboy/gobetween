@@ -10,9 +10,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/stutiredboy/gobetween/core"
-	"github.com/stutiredboy/gobetween/metrics"
-	"github.com/stutiredboy/gobetween/stats/counters"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/metrics"
+	"github.com/yyyar/gobetween/stats/counters"
 )
 
 const (

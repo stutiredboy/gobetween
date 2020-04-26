@@ -7,12 +7,14 @@
 package healthcheck
 
 import (
-	"../config"
-	"../core"
-	"../logging"
 	"time"
 	"strings"
 	"context"
+
+	"github.com/yyyar/gobetween/config"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
+
 	"gopkg.in/jcmturner/gokrb5.v5/client"
 	"gopkg.in/jcmturner/gokrb5.v5/keytab"
 	krb5config "gopkg.in/jcmturner/gokrb5.v5/config"

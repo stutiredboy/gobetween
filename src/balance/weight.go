@@ -10,8 +10,8 @@ import (
 	"errors"
 	"math/rand"
 
-	"github.com/stutiredboy/gobetween/core"
-	"github.com/stutiredboy/gobetween/logging"
+	"github.com/yyyar/gobetween/core"
+	"github.com/yyyar/gobetween/logging"
 )
 
 /**

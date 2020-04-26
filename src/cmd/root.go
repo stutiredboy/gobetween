@@ -9,8 +9,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/stutiredboy/gobetween/info"
-	"github.com/stutiredboy/gobetween/utils/pidfile"
+	"github.com/yyyar/gobetween/info"
+	"github.com/yyyar/gobetween/utils/pidfile"
 	"os"
 )
 

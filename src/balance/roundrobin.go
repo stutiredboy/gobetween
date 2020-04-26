@@ -10,7 +10,7 @@ import (
 	"errors"
 	"sort"
 
-	"github.com/stutiredboy/gobetween/core"
+	"github.com/yyyar/gobetween/core"
 )
 
 /**
